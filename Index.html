@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plant Disease Detector</title>
+
+<style>
+  /* Body Background */
+  body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #d4f0d4, #b8e6b8, #9cd89c);
+    animation: bgmove 12s infinite alternate;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  @keyframes bgmove {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+  }
+
+  /* Floating Leaf Elements */
+  .leaf {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: url('https://i.ibb.co/5nFN3x9/leaf.png') no-repeat center/contain;
+    opacity: 0.2;
+    animation: float 12s infinite linear;
+  }
+
+  @keyframes float {
+    from { transform: translateY(0) rotate(0deg); }
+    to { transform: translateY(-800px) rotate(360deg); }
+  }
+
+  .leaf:nth-child(1) { left: 10%; animation-duration: 13s; }
+  .leaf:nth-child(2) { left: 40%; animation-duration: 10s; }
+  .leaf:nth-child(3) { left: 70%; animation-duration: 15s; }
+
+  /* Container */
+  .container {
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 20px;
+    max-width: 500px;
+    width: 90%;
+    padding: 25px;
+    box-shadow: 0px 10px 25px rgba(0,0,0,0.2);
+    text-align: center;
+    backdrop-filter: blur(5px);
+    z-index: 2;
+  }
+
+  h1 {
+    color: #1c6b28;
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+
+  p {
+    color: #2e7d32;
+    margin-bottom: 20px;
+  }
+
+  /* Upload area */
+  .upload-section {
+    padding: 15px;
+    border-radius: 15px;
+    background: #f0fff0;
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+  }
+
+  #preview {
+    width: 100%;
+    max-height: 250px;
+    object-fit: contain;
+    margin-top: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 3px 10px rgba(0,0,0,0.1);
+    display: none;
+  }
+
+  .btn {
+    margin-top: 15px;
+    padding: 12px 20px;
+    background: #43a047;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .btn:hover {
+    background: #2e7d32;
+  }
+
+  .result {
+    margin-top: 20px;
+    background: #f0fff0;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: left;
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+    display: none;
+  }
+
+  .healthy {
+    color: #1b5e20;
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.2rem;
+  }
+
+  .diseased {
+    color: #e65100;
+    font-weight: bold;
+  }
+
+  label img {
+    cursor: pointer;
+    width: 80px;
+    margin-bottom: 10px;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- Floating leaves -->
+<div class="leaf"></div>
+<div class="leaf"></div>
+<div class="leaf"></div>
+
+<div class="container">
+  <h1>Plant Disease Detector</h1>
+  <p>Upload a photo of your plant to detect disease automatically</p>
+
+  <div class="upload-section">
+    <input type="file" accept="image/*" id="upload" style="display:none;">
+    <label for="upload">
+      <img src="https://i.ibb.co/9G6V0yz/camera.png" alt="Camera">
+      <p>Click to upload or take a photo</p>
+    </label>
+
+    <img id="preview" alt="Preview">
+    <button class="btn" id="analyzeBtn">Analyze Plant</button>
+  </div>
+
+  <div id="result" class="result"></div>
+</div>
+
+<script>
+  const upload = document.getElementById('upload');
+  const preview = document.getElementById('preview');
+  const analyzeBtn = document.getElementById('analyzeBtn');
+  const resultDiv = document.getElementById('result');
+
+  let uploadedFile = null;
+
+  upload.addEventListener('change', function(e){
+    const file = e.target.files[0];
+    if(file){
+      uploadedFile = file;
+      const reader = new FileReader();
+      reader.onload = function(e){
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+      }
+      reader.readAsDataURL(file);
+      resultDiv.style.display = 'none';
+    }
+  });
+
+  analyzeBtn.addEventListener('click', function(){
+    if(!uploadedFile) return alert("Please upload an image first!");
+
+    // Dummy AI detection
+    const isHealthy = Math.random() > 0.5;
+
+    if(isHealthy){
+      resultDiv.innerHTML = `<p class="healthy">✅ Leaf is Healthy!</p>`;
+    } else {
+      resultDiv.innerHTML = `
+        <p class="diseased">⚠️ Early Blight Detected</p>
+        <p><strong>Confidence:</strong> High</p>
+        <p><strong>Symptoms:</strong> Brown spots on leaves, Yellowing</p>
+        <p><strong>Causes:</strong> Fungal infection, Excess moisture</p>
+        <p><strong>Treatment:</strong> Use fungicide, Remove affected leaves</p>
+        <p><strong>Prevention:</strong> Good ventilation, Avoid overhead watering</p>
+      `;
+    }
+
+    resultDiv.style.display = 'block';
+  });
+</script>
+
+</body>
+</html>
